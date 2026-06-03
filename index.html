@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diário da Bruxa · Arcanos Maiores · Pri Ferraz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'IM Fell English', serif;
+      background: #0d0a14;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e8d5a0;
+    }
+
+    /* ── Background layers ── */
+    .nebula {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .nebula-1 {
+      width: 700px; height: 500px;
+      background: radial-gradient(ellipse, rgba(120,40,180,0.20) 0%, transparent 70%);
+      top: -140px; left: -140px;
+    }
+    .nebula-2 {
+      width: 600px; height: 600px;
+      background: radial-gradient(ellipse, rgba(60,20,110,0.24) 0%, transparent 70%);
+      bottom: -180px; right: -120px;
+    }
+    .nebula-3 {
+      width: 480px; height: 360px;
+      background: radial-gradient(ellipse, rgba(180,80,40,0.09) 0%, transparent 70%);
+      top: 42%; left: 28%;
+    }
+    .nebula-4 {
+      width: 350px; height: 350px;
+      background: radial-gradient(ellipse, rgba(60,100,180,0.10) 0%, transparent 70%);
+      top: 20%; right: 5%;
+    }
+
+    #stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      background: #ffffff;
+      border-radius: 50%;
+      animation: twinkle var(--d, 3s) ease-in-out infinite alternate;
+      opacity: var(--o, 0.4);
+    }
+
+    @keyframes twinkle {
+      from { opacity: var(--o, 0.4); transform: scale(1); }
+      to   { opacity: calc(var(--o, 0.4) * 0.15); transform: scale(0.4); }
+    }
+
+    /* ── Page content ── */
+    #page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      padding: 56px 24px 28px;
+    }
+
+    .brand-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 5px;
+      color: #c9a84c;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      opacity: 0.75;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(26px, 5.5vw, 58px);
+      color: #e8d5a0;
+      font-weight: 400;
+      letter-spacing: 2px;
+      line-height: 1.15;
+      text-shadow: 0 0 60px rgba(201,168,76,0.28), 0 0 120px rgba(120,40,180,0.15);
+    }
+
+    h1 .tagline {
+      display: block;
+      font-size: 0.42em;
+      color: #c9a84c;
+      letter-spacing: 7px;
+      font-family: 'Cinzel', serif;
+      font-weight: 400;
+      margin-top: 8px;
+      opacity: 0.88;
+    }
+
+    .ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin: 22px auto;
+      max-width: 420px;
+    }
+    .ornament-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent); }
+    .ornament-glyph { color: #c9a84c; font-size: 13px; opacity: 0.8; }
+
+    .subtitle {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      color: #b8a07a;
+      font-size: 15px;
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.8;
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 24px 20px 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-draw {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #0d0a14;
+      background: linear-gradient(135deg, #b8922a 0%, #e8d5a0 45%, #c9a84c 70%, #a0761e 100%);
+      border: none;
+      padding: 13px 32px;
+      cursor: pointer;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: filter 0.25s, transform 0.2s;
+      position: relative;
+    }
+    .btn-draw:hover  { filter: brightness(1.12); transform: translateY(-2px); }
+    .btn-draw:active { transform: translateY(0); filter: brightness(0.95); }
+
+    .btn-shuffle {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #c9a84c;
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.45);
+      padding: 12px 24px;
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s, transform 0.2s;
+    }
+    .btn-shuffle:hover  { border-color: #c9a84c; background: rgba(201,168,76,0.09); transform: translateY(-1px); }
+    .btn-shuffle:active { transform: translateY(0); }
+
+    /* ── Deck stack ── */
+    .deck-zone {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 24px 0;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .deck-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #deck-stack {
+      position: relative;
+      width: 114px;
+      height: 190px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    #deck-stack:hover { transform: translateY(-7px); }
+    #deck-stack.empty { opacity: 0.25; cursor: not-allowed; pointer-events: none; }
+
+    .phantom {
+      position: absolute;
+      width: 100px;
+      height: 170px;
+      border-radius: 9px;
+      background: linear-gradient(145deg, #1c1030, #2e1b50);
+      border: 1px solid rgba(201,168,76,0.22);
+    }
+    .phantom:nth-child(1) { top: 0;  left: 0;  box-shadow: 0 0 24px rgba(120,40,180,0.35); }
+    .phantom:nth-child(2) { top: 3px; left: 3px; }
+    .phantom:nth-child(3) { top: 6px; left: 6px; }
+    .phantom:nth-child(4) { top: 9px; left: 9px; }
+    .phantom:nth-child(5) { top: 12px; left: 12px; background: linear-gradient(145deg, #201245, #3d2268); }
+
+    .card-back {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100px;
+      height: 170px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-back-inner {
+      width: 84px;
+      height: 154px;
+      border: 1px solid rgba(201,168,76,0.38);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .card-back-inner::before {
+      content: '✦';
+      color: rgba(201,168,76,0.45);
+      font-size: 38px;
+      position: absolute;
+      animation: glyph-pulse 3s ease-in-out infinite;
+    }
+    .card-back-inner::after {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 4px;
+    }
+
+    @keyframes glyph-pulse {
+      0%, 100% { opacity: 0.45; }
+      50%       { opacity: 0.85; }
+    }
+
+    .deck-count {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(201,168,76,0.6);
+      text-transform: uppercase;
+    }
+
+    #deck-hint {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      color: rgba(201,168,76,0.65);
+      font-size: 12px;
+      letter-spacing: 1px;
+      animation: pulse-hint 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse-hint {
+      0%, 100% { opacity: 0.5; }
+      50%       { opacity: 1; }
+    }
+
+    /* ── Reading area ── */
+    #reading-area {
+      position: relative;
+      flex: 1;
+      min-height: 520px;
+      margin: 16px 0 0;
+      padding: 20px;
+    }
+
+    .empty-state {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+    .empty-state p {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      color: rgba(201,168,76,0.22);
+      font-size: 20px;
+      line-height: 2;
+    }
+    .empty-state.hidden { opacity: 0; }
+
+    /* ── Placed cards ── */
+    .placed-card {
+      position: absolute;
+      cursor: grab;
+      z-index: 10;
+      animation: card-appear 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    .placed-card:hover { z-index: 50; }
+    .placed-card.dragging { cursor: grabbing; z-index: 200; }
+
+    @keyframes card-appear {
+      from { opacity: 0; transform: translateY(-40px) scale(0.75) rotate(-8deg); }
+      to   { opacity: 1; }
+    }
+
+    .tarot-card {
+      width: 100px;
+      height: 170px;
+      border-radius: 9px;
+      border: 2px solid rgba(201,168,76,0.5);
+      overflow: hidden;
+      background: #2a1e10;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6), 0 0 0 0 rgba(201,168,76,0);
+      transition: box-shadow 0.35s;
+    }
+    .placed-card:hover .tarot-card {
+      box-shadow: 0 8px 36px rgba(0,0,0,0.7), 0 0 28px rgba(201,168,76,0.38), 0 0 60px rgba(140,60,200,0.18);
+    }
+
+    .tarot-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: filter 0.3s;
+    }
+    .placed-card:hover .tarot-card img { filter: brightness(1.05) saturate(1.1); }
+
+    .card-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+    .card-fallback .fallback-glyph {
+      font-size: 28px;
+      opacity: 0.8;
+    }
+    .card-fallback .fallback-name {
+      font-family: 'Cinzel', serif;
+      font-size: 8.5px;
+      letter-spacing: 0.5px;
+      line-height: 1.5;
+      color: #e8d5a0;
+    }
+    .card-fallback .fallback-num {
+      font-family: 'Cinzel', serif;
+      font-size: 7px;
+      letter-spacing: 2px;
+      opacity: 0.5;
+    }
+
+    .card-label {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cinzel', serif;
+      font-size: 8.5px;
+      letter-spacing: 0.8px;
+      color: rgba(201,168,76,0.8);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* ── Shuffle overlay ── */
+    #shuffle-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 7, 18, 0.88);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+      backdrop-filter: blur(6px);
+    }
+    #shuffle-overlay.active { opacity: 1; pointer-events: all; }
+
+    .shuffle-anim-wrap {
+      position: relative;
+      width: 220px;
+      height: 220px;
+    }
+
+    .s-card {
+      position: absolute;
+      width: 78px;
+      height: 132px;
+      background: linear-gradient(145deg, #1a0f2e, #3d2268);
+      border: 1px solid rgba(201,168,76,0.35);
+      border-radius: 7px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .s-card::after {
+      content: '✦';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(201,168,76,0.3);
+      font-size: 24px;
+    }
+
+    @keyframes s-anim {
+      0%   { transform: translate(-50%, -50%) rotate(0deg) translate(0px, 0px); }
+      30%  { transform: translate(-50%, -50%) rotate(var(--sr)) translate(var(--sx), var(--sy)); }
+      70%  { transform: translate(-50%, -50%) rotate(calc(var(--sr) * -0.6)) translate(calc(var(--sx) * -0.8), calc(var(--sy) * 0.5)); }
+      100% { transform: translate(-50%, -50%) rotate(0deg) translate(0px, 0px); }
+    }
+
+    .shuffle-title {
+      font-family: 'Cinzel Decorative', serif;
+      color: #c9a84c;
+      font-size: 20px;
+      letter-spacing: 3px;
+      text-align: center;
+      text-shadow: 0 0 30px rgba(201,168,76,0.4);
+    }
+    .shuffle-sub {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      color: rgba(184,160,122,0.65);
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+    .shuffle-orb {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(140,60,220,0.3) 0%, transparent 70%);
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: orb-pulse 1.4s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes orb-pulse {
+      from { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+      to   { transform: translate(-50%, -50%) scale(1.5); opacity: 0.2; }
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 48px 24px 28px;
+      position: relative;
+      z-index: 1;
+    }
+    .footer-ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      max-width: 260px;
+      margin: 0 auto 14px;
+    }
+    .footer-ornament .ornament-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent); }
+    .footer-brand {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 5px;
+      color: rgba(201,168,76,0.4);
+      text-transform: uppercase;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      header { padding: 36px 16px 20px; }
+      .controls { gap: 10px; }
+      .btn-draw { padding: 11px 24px; font-size: 11px; }
+      .btn-shuffle { padding: 10px 18px; font-size: 10px; }
+      #reading-area { min-height: 440px; padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="nebula nebula-1"></div>
+  <div class="nebula nebula-2"></div>
+  <div class="nebula nebula-3"></div>
+  <div class="nebula nebula-4"></div>
+  <div id="stars"></div>
+
+  <!-- Shuffle overlay -->
+  <div id="shuffle-overlay" aria-live="polite">
+    <div class="shuffle-anim-wrap" id="shuffle-anim">
+      <div class="shuffle-orb"></div>
+    </div>
+    <div class="shuffle-title">Embaralhando...</div>
+    <div class="shuffle-sub">Concentre sua intenção nas cartas</div>
+  </div>
+
+  <!-- Page -->
+  <div id="page">
+    <header>
+      <div class="brand-tag">Pri Ferraz</div>
+      <h1>
+        Diário da Bruxa
+        <span class="tagline">✦ &nbsp; Arcanos Maiores &nbsp; ✦</span>
+      </h1>
+      <div class="ornament">
+        <div class="ornament-line"></div>
+        <span class="ornament-glyph">✦</span>
+        <div class="ornament-line"></div>
+      </div>
+      <p class="subtitle">
+        As cartas guardam os segredos do universo.<br>
+        Retire uma carta do baralho e posicione onde seu coração mandar.
+      </p>
+    </header>
+
+    <div class="controls">
+      <button class="btn-draw" onclick="drawCard()">✦ &nbsp; Retirar Carta</button>
+      <button class="btn-shuffle" onclick="reshuffleAll()">↺ &nbsp; Reembaralhar</button>
+    </div>
+
+    <div class="deck-zone">
+      <div class="deck-wrapper">
+        <div id="deck-stack" onclick="drawCard()" title="Clique para retirar uma carta">
+          <div class="phantom"></div>
+          <div class="phantom"></div>
+          <div class="phantom"></div>
+          <div class="phantom"></div>
+          <div class="phantom card-back">
+            <div class="card-back-inner"></div>
+          </div>
+        </div>
+        <div class="deck-count" id="deck-count">22 cartas</div>
+        <div id="deck-hint">Clique para revelar</div>
+      </div>
+    </div>
+
+    <div id="reading-area">
+      <div class="empty-state" id="empty-state">
+        <p>O baralho aguarda<br>sua intenção...</p>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-ornament">
+        <div class="ornament-line"></div>
+        <span class="ornament-glyph" style="font-size:10px;color:rgba(201,168,76,0.35);">✦</span>
+        <div class="ornament-line"></div>
+      </div>
+      <div class="footer-brand">Diário da Bruxa &nbsp;·&nbsp; Pri Ferraz</div>
+    </footer>
+  </div>
+
+  <script>
+    /* ── Data ── */
+    const ARCANA = [
+      { num: 0,  name: 'O Louco',         roman: 'O',    color: '#4a3a1a', glyph: '✦' },
+      { num: 1,  name: 'O Mago',          roman: 'I',    color: '#3a2a10', glyph: '✨' },
+      { num: 2,  name: 'A Sacerdotisa',   roman: 'II',   color: '#2a1a40', glyph: '🌙' },
+      { num: 3,  name: 'A Imperatriz',    roman: 'III',  color: '#1a3020', glyph: '✿' },
+      { num: 4,  name: 'O Imperador',     roman: 'IV',   color: '#3a1010', glyph: '♦' },
+      { num: 5,  name: 'O Hierofante',    roman: 'V',    color: '#2a1a40', glyph: '☽' },
+      { num: 6,  name: 'Os Amantes',      roman: 'VI',   color: '#3a1820', glyph: '♡' },
+      { num: 7,  name: 'O Carro',         roman: 'VII',  color: '#101830', glyph: '★' },
+      { num: 8,  name: 'A Força',         roman: 'VIII', color: '#3a2800', glyph: '☀' },
+      { num: 9,  name: 'O Eremita',       roman: 'IX',   color: '#252522', glyph: '🕯' },
+      { num: 10, name: 'Roda da Fortuna', roman: 'X',    color: '#302510', glyph: '⊕' },
+      { num: 11, name: 'A Justiça',       roman: 'XI',   color: '#102030', glyph: '⚖' },
+      { num: 12, name: 'O Enforcado',     roman: 'XII',  color: '#101828', glyph: '☯' },
+      { num: 13, name: 'A Morte',         roman: 'XIII', color: '#151520', glyph: '☽' },
+      { num: 14, name: 'A Temperança',    roman: 'XIV',  color: '#102018', glyph: '∞' },
+      { num: 15, name: 'O Diabo',         roman: 'XV',   color: '#280808', glyph: '⛧' },
+      { num: 16, name: 'A Torre',         roman: 'XVI',  color: '#301008', glyph: '⚡' },
+      { num: 17, name: 'A Estrela',       roman: 'XVII', color: '#101830', glyph: '★' },
+      { num: 18, name: 'A Lua',           roman: 'XVIII',color: '#180f2a', glyph: '🌙' },
+      { num: 19, name: 'O Sol',           roman: 'XIX',  color: '#302000', glyph: '☀' },
+      { num: 20, name: 'O Julgamento',    roman: 'XX',   color: '#301808', glyph: '♔' },
+      { num: 21, name: 'O Mundo',         roman: 'XXI',  color: '#102010', glyph: '✦' },
+    ];
+
+    const RW_IMAGES = {
+      0:  'https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg',
+      1:  'https://upload.wikimedia.org/wikipedia/commons/1/10/RWS_Tarot_01_Magician.jpg',
+      2:  'https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg',
+      3:  'https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg',
+      4:  'https://upload.wikimedia.org/wikipedia/commons/c/c3/RWS_Tarot_04_Emperor.jpg',
+      5:  'https://upload.wikimedia.org/wikipedia/commons/8/8d/RWS_Tarot_05_Hierophant.jpg',
+      6:  'https://upload.wikimedia.org/wikipedia/commons/3/3a/RWS_Tarot_06_Lovers.jpg',
+      7:  'https://upload.wikimedia.org/wikipedia/commons/9/9b/RWS_Tarot_07_Chariot.jpg',
+      8:  'https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg',
+      9:  'https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg',
+      10: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg',
+      11: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg',
+      12: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg',
+      13: 'https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg',
+      14: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/RWS_Tarot_14_Temperance.jpg',
+      15: 'https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg',
+      16: 'https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg',
+      17: 'https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg',
+      18: 'https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg',
+      19: 'https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg',
+      20: 'https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg',
+      21: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/RWS_Tarot_21_World.jpg',
+    };
+
+    /* ── State ── */
+    let deck = [];
+    let placedCards = [];
+
+    /* ── Stars ── */
+    function initStars() {
+      const container = document.getElementById('stars');
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < 150; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const size = Math.random() * 2.2 + 0.4;
+        const delay = (Math.random() * 5).toFixed(2);
+        const dur   = (2.5 + Math.random() * 4).toFixed(2);
+        const op    = (0.08 + Math.random() * 0.72).toFixed(2);
+        s.style.cssText = `width:${size}px;height:${size}px;top:${(Math.random()*100).toFixed(2)}%;left:${(Math.random()*100).toFixed(2)}%;--d:${dur}s;--o:${op};animation-delay:${delay}s;`;
+        frag.appendChild(s);
+      }
+      container.appendChild(frag);
+    }
+
+    /* ── Deck ── */
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function initDeck() {
+      deck = shuffle([...ARCANA]);
+      updateDeckUI();
+    }
+
+    function updateDeckUI() {
+      const countEl = document.getElementById('deck-count');
+      const hintEl  = document.getElementById('deck-hint');
+      const stackEl = document.getElementById('deck-stack');
+      const n = deck.length;
+      countEl.textContent = n + (n === 1 ? ' carta' : ' cartas');
+      if (n === 0) {
+        stackEl.classList.add('empty');
+        hintEl.textContent = 'Baralho esgotado';
+        hintEl.style.animationPlayState = 'paused';
+        hintEl.style.opacity = '0.4';
+      } else {
+        stackEl.classList.remove('empty');
+        hintEl.textContent = 'Clique para revelar';
+        hintEl.style.animationPlayState = 'running';
+        hintEl.style.opacity = '';
+      }
+    }
+
+    /* ── Draw ── */
+    function drawCard() {
+      if (deck.length === 0) return;
+
+      const card = deck.pop();
+      updateDeckUI();
+
+      const emptyState = document.getElementById('empty-state');
+      if (emptyState) emptyState.classList.add('hidden');
+
+      const area     = document.getElementById('reading-area');
+      const areaRect = area.getBoundingClientRect();
+      const W = areaRect.width  || window.innerWidth;
+      const H = Math.max(areaRect.height, 500);
+
+      const x   = 30 + Math.random() * Math.max(W - 160, 40);
+      const y   = 30 + Math.random() * Math.max(H - 220, 40);
+      const rot = (Math.random() - 0.5) * 18;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'placed-card';
+      wrapper.style.left      = x + 'px';
+      wrapper.style.top       = y + 'px';
+      wrapper.style.transform = `rotate(${rot}deg)`;
+      wrapper.dataset.rot     = rot;
+
+      /* Card element */
+      const cardEl = document.createElement('div');
+      cardEl.className = 'tarot-card';
+      cardEl.style.background = card.color;
+
+      /* Try Rider-Waite image */
+      const img = new Image();
+      img.alt   = card.name;
+      img.onload = () => {
+        cardEl.innerHTML = '';
+        cardEl.appendChild(img);
+      };
+      img.onerror = () => {
+        /* Fallback illustrated card */
+        cardEl.innerHTML = `
+          <div class="card-fallback" style="background:${card.color};">
+            <div class="fallback-glyph">${card.glyph}</div>
+            <div class="fallback-name">${card.name}</div>
+            <div class="fallback-num">${card.roman}</div>
+          </div>`;
+      };
+
+      /* Show fallback immediately, replace when image loads */
+      cardEl.innerHTML = `
+        <div class="card-fallback" style="background:${card.color};">
+          <div class="fallback-glyph">${card.glyph}</div>
+          <div class="fallback-name">${card.name}</div>
+          <div class="fallback-num">${card.roman}</div>
+        </div>`;
+      img.src = RW_IMAGES[card.num];
+
+      /* Label */
+      const label = document.createElement('div');
+      label.className   = 'card-label';
+      label.textContent = card.name;
+
+      wrapper.appendChild(cardEl);
+      wrapper.appendChild(label);
+      area.appendChild(wrapper);
+
+      makeDraggable(wrapper);
+      placedCards.push(wrapper);
+    }
+
+    /* ── Drag ── */
+    function makeDraggable(el) {
+      let startX, startY, startL, startT;
+
+      const getXY = (e) => {
+        const src = e.touches ? e.touches[0] : e;
+        return { x: src.clientX, y: src.clientY };
+      };
+
+      const onStart = (e) => {
+        e.preventDefault();
+        const { x, y } = getXY(e);
+        startX = x;
+        startY = y;
+        startL = parseFloat(el.style.left)  || 0;
+        startT = parseFloat(el.style.top)   || 0;
+        el.classList.add('dragging');
+        /* bring to front */
+        placedCards.forEach(c => c.style.zIndex = 10);
+        el.style.zIndex = 200;
+      };
+
+      const onMove = (e) => {
+        if (!el.classList.contains('dragging')) return;
+        e.preventDefault();
+        const { x, y } = getXY(e);
+        el.style.left = (startL + x - startX) + 'px';
+        el.style.top  = (startT + y - startY) + 'px';
+      };
+
+      const onEnd = () => {
+        el.classList.remove('dragging');
+        el.style.zIndex = 10;
+      };
+
+      el.addEventListener('mousedown',  onStart, { passive: false });
+      el.addEventListener('touchstart', onStart, { passive: false });
+      document.addEventListener('mousemove',  onMove, { passive: false });
+      document.addEventListener('touchmove',  onMove, { passive: false });
+      document.addEventListener('mouseup',    onEnd);
+      document.addEventListener('touchend',   onEnd);
+    }
+
+    /* ── Reshuffle ── */
+    function reshuffleAll() {
+      const overlay   = document.getElementById('shuffle-overlay');
+      const animWrap  = document.getElementById('shuffle-anim');
+
+      /* Build shuffle animation cards */
+      const old = animWrap.querySelectorAll('.s-card');
+      old.forEach(c => c.remove());
+
+      for (let i = 0; i < 9; i++) {
+        const c  = document.createElement('div');
+        c.className = 's-card';
+        const sr = ((Math.random() - 0.5) * 80).toFixed(1);
+        const sx = ((Math.random() - 0.5) * 80).toFixed(1);
+        const sy = ((Math.random() - 0.5) * 50).toFixed(1);
+        const d  = (i * 0.07).toFixed(2);
+        c.style.cssText = `--sr:${sr}deg;--sx:${sx}px;--sy:${sy}px;animation:s-anim 0.7s ${d}s ease-in-out infinite alternate;`;
+        animWrap.appendChild(c);
+      }
+
+      overlay.classList.add('active');
+
+      setTimeout(() => {
+        /* Remove placed cards */
+        const area = document.getElementById('reading-area');
+        placedCards.forEach(el => { if (el.parentNode) el.parentNode.removeChild(el); });
+        placedCards = [];
+
+        const emptyState = document.getElementById('empty-state');
+        if (emptyState) emptyState.classList.remove('hidden');
+
+        initDeck();
+        overlay.classList.remove('active');
+      }, 2400);
+    }
+
+    /* ── Init ── */
+    initStars();
+    initDeck();
+  </script>
+</body>
+</html>
