@@ -114,13 +114,42 @@
       const emptyState = document.getElementById('empty-state');
       if (emptyState) emptyState.classList.add('hidden');
 
-      const area     = document.getElementById('reading-area');
-      const areaRect = area.getBoundingClientRect();
-      const W = areaRect.width  || window.innerWidth;
-      const H = Math.max(areaRect.height, 500);
+      const area = document.getElementById('reading-area');
+      const margin = 16;
+      // Reserva espaço para a carta (100 x 170), rotação e legenda.
+      const cardWidth = 130;
+      const cardHeight = 215;
 
-      const x   = 30 + Math.random() * Math.max(W - 160, 40);
-      const y   = 30 + Math.random() * Math.max(H - 220, 40);
+      let areaRect = area.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      // Quando a área de leitura estiver abaixo da dobra, traga-a
+      // para a tela antes de definir a posição da nova carta.
+      const visibleTop = Math.max(areaRect.top, 0);
+      const visibleBottom = Math.min(areaRect.bottom, viewportHeight);
+      if (visibleBottom - visibleTop < Math.min(cardHeight + margin * 2, viewportHeight)) {
+        window.scrollTo({
+          top: window.scrollY + areaRect.top - margin,
+          behavior: 'instant'
+        });
+        areaRect = area.getBoundingClientRect();
+      }
+
+      // Interseção entre a área de leitura e o viewport atual.
+      // Posições são relativas à área, pois as cartas usam position:absolute.
+      const minX = Math.max(margin, -areaRect.left + margin);
+      const maxX = Math.min(
+        area.clientWidth - cardWidth - margin,
+        window.innerWidth - areaRect.left - cardWidth - margin
+      );
+      const minY = Math.max(margin, -areaRect.top + margin);
+      const maxY = Math.min(
+        area.clientHeight - cardHeight - margin,
+        viewportHeight - areaRect.top - cardHeight - margin
+      );
+      const randomBetween = (min, max) => min + Math.random() * Math.max(0, max - min);
+      const x = randomBetween(minX, Math.max(minX, maxX));
+      const y = randomBetween(minY, Math.max(minY, maxY));
       const rot = (Math.random() - 0.5) * 18;
 
       const wrapper = document.createElement('div');
