@@ -177,12 +177,41 @@
       closeHousesModal();
     });
 
+
+    /* ── Botão flutuante mobile ── */
+    const floatingDraw = document.getElementById('floating-draw');
+    const mobileDrawQuery = window.matchMedia('(max-width: 600px)');
+    const regularDraw = document.querySelector('.btn-draw');
+    const deckStack = document.getElementById('deck-stack');
+
+    function isOnScreen(element) {
+      const rect = element.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0 &&
+        rect.bottom > 0 && rect.top < window.innerHeight &&
+        rect.right > 0 && rect.left < window.innerWidth;
+    }
+
+    function updateFloatingDraw() {
+      const show = mobileDrawQuery.matches && deck.length > 0 &&
+        !isOnScreen(regularDraw) && !isOnScreen(deckStack);
+      floatingDraw.classList.toggle('is-visible', show);
+      floatingDraw.disabled = !show;
+    }
+
+    floatingDraw.addEventListener('click', () => {
+      if (deck.length > 0) drawCard();
+    });
+    window.addEventListener('scroll', updateFloatingDraw, { passive: true });
+    window.addEventListener('resize', updateFloatingDraw);
+    mobileDrawQuery.addEventListener('change', updateFloatingDraw);
+
     /* ── Draw ── */
     function drawCard() {
       if (deck.length === 0) return;
 
       const card = deck.pop();
       updateDeckUI();
+      updateFloatingDraw();
 
       const emptyState = document.getElementById('empty-state');
       if (emptyState) emptyState.classList.add('hidden');
@@ -359,3 +388,4 @@
     /* ── Init ── */
     initStars();
     initDeck();
+    updateFloatingDraw();
