@@ -49,6 +49,7 @@
     <div class="controls">
       <button class="btn-draw" onclick="drawCard()">✦ &nbsp; Retirar Carta</button>
       <button class="btn-shuffle" onclick="reshuffleAll()">↺ &nbsp; Reembaralhar</button>
+      <button class="btn-shuffle" id="open-houses" type="button">✧ &nbsp; Criar Casas</button>
     </div>
 
     <div class="deck-zone">
@@ -68,6 +69,7 @@
     </div>
 
     <div id="reading-area">
+      <div id="houses-grid" class="houses-grid" aria-label="Casas da tiragem"></div>
       <div class="empty-state" id="empty-state">
         <p>O baralho aguarda<br>sua intenção...</p>
       </div>
@@ -83,6 +85,16 @@
     </footer>
   </div>
 
+  <div id="houses-modal" class="houses-modal" hidden>
+    <div class="houses-dialog" role="dialog" aria-modal="true" aria-labelledby="houses-title">
+      <button type="button" class="houses-close" id="close-houses" aria-label="Fechar">×</button>
+      <h2 id="houses-title">Nomeie as Casas</h2>
+      <form id="houses-form">
+        <div id="house-inputs" class="house-inputs"></div>
+        <button type="submit" class="btn-draw">Criar Casas</button>
+      </form>
+    </div>
+  </div>
   <script src="js/script.js"></script>
 </body>
 </html>
