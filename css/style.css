@@ -490,3 +490,106 @@
       #reading-area { min-height: 440px; padding: 12px; }
       .placed-card .tarot-card { width: 85px; height: 144.5px; }
     }
+
+/* Casas da tiragem */
+.houses-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  pointer-events: none;
+}
+.houses-grid:empty { display: none; }
+.house {
+  position: relative;
+  min-width: 0;
+  min-height: 235px;
+  border: 1px solid rgba(201,168,76,.52);
+  background: rgba(40,23,62,.25);
+  border-radius: 10px;
+  box-shadow: inset 0 0 24px rgba(201,168,76,.04);
+}
+.house-title {
+  font: 600 13px 'Cinzel', serif;
+  letter-spacing: 1px;
+  color: #e8d5a0;
+  text-align: center;
+  padding: 15px 36px 10px;
+  overflow-wrap: anywhere;
+}
+.house-remove {
+  pointer-events: auto;
+  position: absolute;
+  right: 8px;
+  top: 7px;
+  width: 25px;
+  height: 25px;
+  color: #c9a84c;
+  background: rgba(13,10,20,.75);
+  border: 1px solid rgba(201,168,76,.35);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  z-index: 2;
+}
+.house-remove:hover { background: #4a2c55; }
+.houses-modal[hidden] { display: none; }
+.houses-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 600;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(8,5,17,.85);
+  backdrop-filter: blur(7px);
+}
+.houses-dialog {
+  position: relative;
+  width: min(100%, 460px);
+  max-height: min(85vh, 700px);
+  overflow-y: auto;
+  padding: 34px 25px 26px;
+  border: 1px solid rgba(201,168,76,.6);
+  border-radius: 12px;
+  background: #1b112b;
+  box-shadow: 0 20px 70px rgba(0,0,0,.7);
+}
+.houses-dialog h2 {
+  font: 400 23px 'Cinzel Decorative', serif;
+  text-align: center;
+  margin-bottom: 24px;
+  color: #e8d5a0;
+}
+.houses-close {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  background: none;
+  border: 0;
+  color: #c9a84c;
+  font-size: 26px;
+  cursor: pointer;
+}
+.house-inputs { display: grid; gap: 12px; margin-bottom: 25px; }
+.house-inputs input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid rgba(201,168,76,.38);
+  border-radius: 5px;
+  background: #0d0a14;
+  color: #e8d5a0;
+  font: 15px 'IM Fell English', serif;
+}
+.house-inputs input:focus { outline: 1px solid #c9a84c; }
+.houses-dialog .btn-draw { display: block; margin: 0 auto; }
+@media (min-width: 601px) and (max-width: 900px) {
+  .houses-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 600px) {
+  .houses-grid { grid-template-columns: 1fr; gap: 16px; }
+  .house { min-height: 215px; }
+  .house-title { font-size: 12px; }
+  .houses-dialog { padding: 30px 18px 23px; }
+}
