@@ -116,9 +116,10 @@
 
       const area = document.getElementById('reading-area');
       const margin = 16;
-      // Reserva espaço para a carta (100 x 170), rotação e legenda.
-      const cardWidth = 130;
-      const cardHeight = 215;
+      // Reserva espaço para a carta, rotação e legenda em cada tamanho de tela.
+      const isMobile = window.matchMedia('(max-width: 600px)').matches;
+      const cardWidth = isMobile ? 115 : 130;
+      const cardHeight = isMobile ? 190 : 215;
 
       let areaRect = area.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
