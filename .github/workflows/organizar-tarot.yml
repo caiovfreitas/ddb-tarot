@@ -1,5 +1,6 @@
 name: Organizar arquivos do Tarot
 on:
+  workflow_dispatch:
   push:
     paths:
       - '.github/workflows/organizar-tarot.yml'
