@@ -104,6 +104,73 @@
       }
     }
 
+
+    /* ── Casas ── */
+    const housesModal = document.getElementById('houses-modal');
+    const houseInputs = document.getElementById('house-inputs');
+    const housesGrid = document.getElementById('houses-grid');
+
+    function appendHouseInput() {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Ex: Casa do Passado';
+      input.setAttribute('aria-label', 'Nome da casa ' + (houseInputs.children.length + 1));
+      input.maxLength = 70;
+      input.addEventListener('input', () => {
+        const all = [...houseInputs.querySelectorAll('input')];
+        if (all[all.length - 1] === input && input.value.trim()) appendHouseInput();
+      });
+      houseInputs.appendChild(input);
+    }
+
+    function openHousesModal() {
+      houseInputs.replaceChildren();
+      appendHouseInput();
+      appendHouseInput();
+      housesModal.hidden = false;
+      houseInputs.querySelector('input').focus();
+    }
+
+    function closeHousesModal() {
+      housesModal.hidden = true;
+    }
+
+    function createHouse(name) {
+      const house = document.createElement('section');
+      house.className = 'house';
+      const title = document.createElement('h3');
+      title.className = 'house-title';
+      title.textContent = name;
+      const remove = document.createElement('button');
+      remove.className = 'house-remove';
+      remove.type = 'button';
+      remove.textContent = '×';
+      remove.setAttribute('aria-label', 'Excluir ' + name);
+      remove.addEventListener('click', () => house.remove());
+      house.append(title, remove);
+      housesGrid.appendChild(house);
+    }
+
+    document.getElementById('open-houses').addEventListener('click', openHousesModal);
+    document.getElementById('close-houses').addEventListener('click', closeHousesModal);
+    housesModal.addEventListener('click', (event) => {
+      if (event.target === housesModal) closeHousesModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !housesModal.hidden) closeHousesModal();
+    });
+    document.getElementById('houses-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const names = [...houseInputs.querySelectorAll('input')]
+        .map(input => input.value.trim()).filter(Boolean);
+      if (!names.length) {
+        houseInputs.querySelector('input').focus();
+        return;
+      }
+      names.forEach(createHouse);
+      closeHousesModal();
+    });
+
     /* ── Draw ── */
     function drawCard() {
       if (deck.length === 0) return;
