@@ -113,7 +113,7 @@
     function appendHouseInput() {
       const input = document.createElement('input');
       input.type = 'text';
-      input.placeholder = 'Ex: Casa do Passado';
+      input.placeholder = 'Nome da Casa';
       input.setAttribute('aria-label', 'Nome da casa ' + (houseInputs.children.length + 1));
       input.maxLength = 70;
       input.addEventListener('input', () => {
@@ -146,7 +146,12 @@
       remove.type = 'button';
       remove.textContent = '×';
       remove.setAttribute('aria-label', 'Excluir ' + name);
-      remove.addEventListener('click', () => house.remove());
+      remove.addEventListener('click', () => {
+        house.remove();
+        if (!housesGrid.children.length && !placedCards.length) {
+          document.getElementById('empty-state')?.classList.remove('hidden');
+        }
+      });
       house.append(title, remove);
       housesGrid.appendChild(house);
     }
@@ -168,6 +173,7 @@
         return;
       }
       names.forEach(createHouse);
+      document.getElementById('empty-state')?.classList.add('hidden');
       closeHousesModal();
     });
 
@@ -343,7 +349,7 @@
         placedCards = [];
 
         const emptyState = document.getElementById('empty-state');
-        if (emptyState) emptyState.classList.remove('hidden');
+        if (emptyState) emptyState.classList.toggle('hidden', housesGrid.children.length > 0);
 
         initDeck();
         overlay.classList.remove('active');
