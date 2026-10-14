@@ -503,7 +503,7 @@
 .house {
   position: relative;
   min-width: 0;
-  min-height: 235px;
+  min-height: 300px;
   border: 1px solid rgba(201,168,76,.52);
   background: rgba(40,23,62,.25);
   border-radius: 10px;
@@ -582,6 +582,7 @@
   color: #e8d5a0;
   font: 15px 'IM Fell English', serif;
 }
+.house-inputs input::placeholder { color: rgba(232,213,160,.2); opacity: 1; }
 .house-inputs input:focus { outline: 1px solid #c9a84c; }
 .houses-dialog .btn-draw { display: block; margin: 0 auto; }
 @media (min-width: 601px) and (max-width: 900px) {
@@ -589,7 +590,7 @@
 }
 @media (max-width: 600px) {
   .houses-grid { grid-template-columns: 1fr; gap: 16px; }
-  .house { min-height: 215px; }
+  .house { min-height: 280px; }
   .house-title { font-size: 12px; }
   .houses-dialog { padding: 30px 18px 23px; }
 }
