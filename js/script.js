@@ -152,6 +152,7 @@
       remove.setAttribute('aria-label', 'Excluir ' + name);
       remove.addEventListener('click', () => {
         house.remove();
+        updateReadingAreaHeight();
         if (!housesGrid.children.length && !placedCards.length) {
           document.getElementById('empty-state')?.classList.remove('hidden');
         }
@@ -177,6 +178,7 @@
         return;
       }
       names.forEach(createHouse);
+      updateReadingAreaHeight();
       document.getElementById('empty-state')?.classList.add('hidden');
       closeHousesModal();
     });
@@ -208,6 +210,25 @@
     window.addEventListener('scroll', updateFloatingDraw, { passive: true });
     window.addEventListener('resize', updateFloatingDraw);
     mobileDrawQuery.addEventListener('change', updateFloatingDraw);
+
+    /* Mantém o rodapé sempre após a última carta, mesmo sem Casas. */
+    let isDraggingCard = false;
+    function updateReadingAreaHeight() {
+      if (isDraggingCard) return;
+      const area = document.getElementById('reading-area');
+      const grid = document.getElementById('houses-grid');
+      const mobile = window.matchMedia('(max-width: 600px)').matches;
+      const base = mobile ? 440 : 520;
+      const gridBottom = grid.offsetTop + grid.offsetHeight + 20;
+      const cardBottom = placedCards.reduce((max, card) => {
+        if (!card.isConnected) return max;
+        const top = parseFloat(card.style.top) || 0;
+        const height = card.querySelector('.tarot-card')?.offsetHeight || (mobile ? 145 : 170);
+        return Math.max(max, top + height + 52);
+      }, 0);
+      area.style.minHeight = Math.ceil(Math.max(base, gridBottom, cardBottom)) + 'px';
+    }
+    window.addEventListener('resize', updateReadingAreaHeight);
 
     /* ── Draw ── */
     function drawCard() {
@@ -342,6 +363,7 @@
       makeDraggable(wrapper);
       placedCards.push(wrapper);
       updateReshuffleButton();
+      updateReadingAreaHeight();
     }
 
     /* ── Interpretação do Arcano ── */
@@ -410,6 +432,8 @@
         dragging = true;
         moved = false;
         opened = false;
+        isDraggingCard = true;
+        updateReadingAreaHeight();
         placedCards.forEach(card => card.style.zIndex = 10);
         el.style.zIndex = 200;
         clearHold();
@@ -418,6 +442,7 @@
           if (!dragging || moved) return;
           opened = true;
           dragging = false;
+          isDraggingCard = false;
           el.classList.remove('dragging');
           el.style.zIndex = 10;
           openOracle(Number(el.dataset.arcana));
@@ -444,8 +469,10 @@
       const onEnd = () => {
         clearHold();
         dragging = false;
+        isDraggingCard = false;
         el.classList.remove('dragging');
         el.style.zIndex = 10;
+        if (moved) updateReadingAreaHeight();
       };
 
       el.addEventListener('mousedown', onStart, { passive: false });
@@ -486,6 +513,7 @@
         placedCards.forEach(el => { if (el.parentNode) el.parentNode.removeChild(el); });
         placedCards = [];
         updateReshuffleButton();
+        updateReadingAreaHeight();
 
         const emptyState = document.getElementById('empty-state');
         if (emptyState) emptyState.classList.toggle('hidden', housesGrid.children.length > 0);
@@ -498,5 +526,6 @@
     /* ── Init ── */
     initStars();
     initDeck();
+    updateReadingAreaHeight();
     updateReshuffleButton();
     updateFloatingDraw();
