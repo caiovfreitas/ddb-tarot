@@ -632,3 +632,69 @@
     pointer-events: none;
   }
 }
+
+/* Leitura terapêutica por toque prolongado */
+.card-hold-hint {
+  position: relative;
+  z-index: 1;
+  margin: 20px 16px 0;
+  text-align: center;
+  font: italic 14px 'IM Fell English', serif;
+  color: rgba(232,213,160,.68);
+}
+.oracle-modal[hidden] { display: none; }
+.oracle-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  background: rgba(8,5,17,.88);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+.oracle-dialog {
+  width: min(100%, 720px);
+  max-height: min(90dvh, 800px);
+  overflow-y: auto;
+  position: relative;
+  padding: 35px clamp(20px, 5vw, 40px) 26px;
+  background: #1c122d;
+  border: 1px solid rgba(201,168,76,.65);
+  border-radius: 12px;
+  box-shadow: 0 20px 80px rgba(0,0,0,.7);
+}
+.oracle-close {
+  position: absolute; right: 11px; top: 9px;
+  background: none; color: #c9a84c; border: 0;
+  padding: 4px 10px; cursor: pointer; font-size: 28px;
+}
+.oracle-eyebrow {
+  text-align: center;
+  font: 11px 'Cinzel', serif; letter-spacing: 3px;
+  color: #c9a84c; margin-bottom: 8px;
+}
+.oracle-dialog h2 {
+  font: 400 clamp(22px, 4vw, 34px) 'Cinzel Decorative', serif;
+  color: #e8d5a0; text-align: center; margin: 0 26px 24px;
+}
+.oracle-content { display: grid; grid-template-columns: 145px minmax(0,1fr); align-items: start; gap: 26px; }
+.oracle-content img { width: 100%; border: 1px solid #c9a84c; border-radius: 6px; }
+.oracle-intro { font: italic 16px 'IM Fell English', serif; color: #c9a84c; margin-bottom: 14px; }
+.oracle-questions ol { padding-left: 22px; }
+.oracle-questions li { font: 17px/1.5 'IM Fell English', serif; margin-bottom: 13px; }
+.oracle-questions li::marker { color: #c9a84c; }
+.oracle-credit {
+  font: italic 12px 'IM Fell English', serif;
+  text-align: center; color: #9d8969;
+  border-top: 1px solid rgba(201,168,76,.2);
+  padding-top: 16px; margin-top: 16px;
+}
+body.oracle-open { overflow: hidden; }
+@media(max-width:600px) {
+  .card-hold-hint { font-size: 13px; }
+  .oracle-dialog { padding: 32px 18px 20px; }
+  .oracle-content { grid-template-columns: 1fr; gap: 18px; }
+  .oracle-content img { width: 110px; justify-self: center; }
+  .oracle-questions li { font-size: 16px; }
+}
