@@ -254,9 +254,41 @@
         area.clientHeight - cardHeight - margin,
         viewportHeight - areaRect.top - cardHeight - margin
       );
-      const randomBetween = (min, max) => min + Math.random() * Math.max(0, max - min);
-      const x = randomBetween(minX, Math.max(minX, maxX));
-      const y = randomBetween(minY, Math.max(minY, maxY));
+      // Prioriza o centro da região visível e evita cobrir as cartas existentes.
+      // As posições usadas são relativas à área de leitura.
+      const boundsX = [minX, Math.max(minX, maxX)];
+      const boundsY = [minY, Math.max(minY, maxY)];
+      const centerX = (boundsX[0] + boundsX[1]) / 2;
+      const centerY = (boundsY[0] + boundsY[1]) / 2;
+      const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+      const occupied = placedCards.map(el => {
+        const r = el.getBoundingClientRect();
+        return {
+          x: r.left - areaRect.left,
+          y: r.top - areaRect.top,
+          w: r.width,
+          h: r.height
+        };
+      });
+      const overlap = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) *
+        Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+      let best = { x: centerX, y: centerY, score: Infinity };
+      for (let i = 0; i < 180; i++) {
+        // Uma distribuição central com variações suficientes para ocupar espaços livres.
+        const scale = i === 0 ? 0 : Math.min(1, Math.sqrt(i / 110));
+        const candidateX = clamp(centerX + (Math.random() - 0.5) * (boundsX[1] - boundsX[0]) * 2 * scale, ...boundsX);
+        const candidateY = clamp(centerY + (Math.random() - 0.5) * (boundsY[1] - boundsY[0]) * 2 * scale, ...boundsY);
+        const box = { x: candidateX - 6, y: candidateY - 6, w: cardWidth, h: cardHeight };
+        const covered = occupied.reduce((total, other) => total + overlap(box, other), 0);
+        const distance = Math.hypot(
+          (candidateX - centerX) / Math.max(1, boundsX[1] - boundsX[0]),
+          (candidateY - centerY) / Math.max(1, boundsY[1] - boundsY[0])
+        );
+        const score = covered * 12 + distance * 180 + Math.random() * 5;
+        if (score < best.score) best = { x: candidateX, y: candidateY, score };
+      }
+      const x = best.x;
+      const y = best.y;
       const rot = (Math.random() - 0.5) * 18;
 
       const wrapper = document.createElement('div');
