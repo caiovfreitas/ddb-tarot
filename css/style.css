@@ -698,3 +698,6 @@ body.oracle-open { overflow: hidden; }
   .oracle-content img { width: 110px; justify-self: center; }
   .oracle-questions li { font-size: 16px; }
 }
+
+/* Evita que o navegador reposicione a rolagem durante o arraste. */
+#reading-area { overflow-anchor: none; }
