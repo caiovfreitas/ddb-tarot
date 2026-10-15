@@ -639,7 +639,7 @@
   z-index: 1;
   margin: 20px 16px 0;
   text-align: center;
-  font: 600 14px 'Times New Roman', Times, serif;
+  font: italic 400 15px/1.8 'Times New Roman', Times, serif;
   color: rgba(232,213,160,.68);
 }
 .oracle-modal[hidden] { display: none; }
