@@ -53,6 +53,10 @@
     let deck = [];
     let placedCards = [];
 
+    function updateReshuffleButton() {
+      document.getElementById('reshuffle-button').hidden = placedCards.length === 0;
+    }
+
     /* ── Stars ── */
     function initStars() {
       const container = document.getElementById('stars');
@@ -305,6 +309,7 @@
 
       makeDraggable(wrapper);
       placedCards.push(wrapper);
+      updateReshuffleButton();
     }
 
     /* ── Interpretação do Arcano ── */
@@ -448,6 +453,7 @@
         const area = document.getElementById('reading-area');
         placedCards.forEach(el => { if (el.parentNode) el.parentNode.removeChild(el); });
         placedCards = [];
+        updateReshuffleButton();
 
         const emptyState = document.getElementById('empty-state');
         if (emptyState) emptyState.classList.toggle('hidden', housesGrid.children.length > 0);
@@ -460,4 +466,5 @@
     /* ── Init ── */
     initStars();
     initDeck();
+    updateReshuffleButton();
     updateFloatingDraw();
