@@ -239,11 +239,37 @@
 
     /* Mantém uma pequena pilha de cartas excedentes à esquerda do deck. */
     function positionPendingCards() {
-      // A grade CSS distribui as cartas sem sobreposição, em linhas adicionais.
-      [...pendingCardsZone.children].forEach(card => {
-        card.style.removeProperty('left');
-        card.style.removeProperty('top');
-        card.style.removeProperty('z-index');
+      const cards = [...pendingCardsZone.children];
+      if (!cards.length) {
+        pendingCardsZone.style.height = '';
+        return;
+      }
+      const mobile = window.matchMedia('(max-width: 600px)').matches;
+      const width = pendingCardsZone.clientWidth;
+      const cardWidth = mobile ? 85 : 100;
+      const cardHeight = mobile ? 145 : 170;
+      const gap = mobile ? 64 : 73; // Sobreposição discreta, como cartas espalhadas à mão.
+      const usable = Math.max(cardWidth, width - 20);
+      const perRow = Math.max(1, Math.floor((usable - cardWidth) / gap) + 1);
+      const lineHeight = cardHeight + 48;
+      const rows = Math.ceil(cards.length / perRow);
+      pendingCardsZone.style.height = (rows * lineHeight + 14) + 'px';
+
+      cards.forEach((card, index) => {
+        const row = Math.floor(index / perRow);
+        const column = index % perRow;
+        const countThisRow = Math.min(perRow, cards.length - row * perRow);
+        const rowWidth = cardWidth + (countThisRow - 1) * gap;
+        const baseX = Math.max(8, (width - rowWidth) / 2);
+        // Deslocamentos consistentes: as cartas não mudam de inclinação a cada retirada.
+        const swayX = [-5, 4, -3, 6, -4, 2, 5][index % 7];
+        const swayY = [9, -3, 11, 2, -6, 7, 0][index % 7];
+        const angle = [-8, 5, -4, 9, -6, 3, 7][index % 7];
+        card.style.left = Math.max(2, baseX + column * gap + swayX) + 'px';
+        card.style.top = (row * lineHeight + 12 + swayY) + 'px';
+        card.style.transform = 'rotate(' + angle + 'deg)';
+        card.dataset.rot = angle;
+        card.style.zIndex = String(20 + index);
       });
     }
 
@@ -265,6 +291,7 @@
       area.style.minHeight = Math.ceil(Math.max(base, gridBottom, cardBottom)) + 'px';
     }
     window.addEventListener('resize', () => {
+      positionPendingCards();
       positionCardsInHouses();
       updateReadingAreaHeight();
     });
