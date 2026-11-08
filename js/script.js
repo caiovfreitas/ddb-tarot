@@ -318,7 +318,6 @@
       wrapper.style.top       = y + 'px';
       wrapper.style.transform = `rotate(${rot}deg)`;
       wrapper.dataset.rot     = rot;
-      wrapper.dataset.arcana = card.num;
 
       /* Card element */
       const cardEl = document.createElement('div');
@@ -366,62 +365,18 @@
       updateReadingAreaHeight();
     }
 
-    /* ── Interpretação do Arcano ── */
-    const oracleModal = document.getElementById('oracle-modal');
-    const oracleDialog = oracleModal.querySelector('.oracle-dialog');
-    const oracleClose = document.getElementById('oracle-close');
-
-    function openOracle(cardNumber) {
-      const card = ARCANA[cardNumber];
-      if (!card || !Array.isArray(ORACLE_QUESTIONS[cardNumber])) return;
-      document.getElementById('oracle-title').textContent = card.name;
-      document.getElementById('oracle-number').textContent = 'ARCANO ' + card.roman;
-      const image = document.getElementById('oracle-image');
-      image.src = RW_IMAGES[cardNumber];
-      image.alt = 'Carta ' + card.name;
-      const list = document.getElementById('oracle-list');
-      list.replaceChildren();
-      ORACLE_QUESTIONS[cardNumber].forEach(question => {
-        const item = document.createElement('li');
-        item.textContent = question;
-        list.appendChild(item);
-      });
-      oracleModal.hidden = false;
-      document.body.classList.add('oracle-open');
-      oracleDialog.scrollTop = 0;
-      oracleClose.focus();
-    }
-    function closeOracle() {
-      oracleModal.hidden = true;
-      document.body.classList.remove('oracle-open');
-    }
-    oracleClose.addEventListener('click', closeOracle);
-    oracleModal.addEventListener('click', e => {
-      if (e.target === oracleModal) closeOracle();
-    });
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && !oracleModal.hidden) closeOracle();
-    });
-
-    /* ── Arrastar e segurar: não abrir o popup após movimentar ── */
+    /* ── Arrastar cartas com mouse ou toque ── */
     function makeDraggable(el) {
-      const HOLD_MS = 650;
       const MOVE_THRESHOLD = 8;
       let startX = 0, startY = 0, startL = 0, startT = 0;
-      let dragging = false, moved = false, opened = false;
-      let holdTimer = null;
+      let dragging = false, moved = false;
 
-      const clearHold = () => {
-        if (holdTimer !== null) clearTimeout(holdTimer);
-        holdTimer = null;
-      };
       const point = event => {
         const src = event.touches ? event.touches[0] : event;
         return { x: src.clientX, y: src.clientY };
       };
 
       const onStart = event => {
-        if (!oracleModal.hidden) return;
         if (event.type === 'mousedown' && event.button !== 0) return;
         if (event.touches && event.touches.length !== 1) return;
         event.preventDefault();
@@ -431,34 +386,17 @@
         startT = parseFloat(el.style.top) || 0;
         dragging = true;
         moved = false;
-        opened = false;
         isDraggingCard = true;
-        updateReadingAreaHeight();
         placedCards.forEach(card => card.style.zIndex = 10);
         el.style.zIndex = 200;
-        clearHold();
-        holdTimer = setTimeout(() => {
-          holdTimer = null;
-          if (!dragging || moved) return;
-          opened = true;
-          dragging = false;
-          isDraggingCard = false;
-          el.classList.remove('dragging');
-          el.style.zIndex = 10;
-          openOracle(Number(el.dataset.arcana));
-        }, HOLD_MS);
       };
       const onMove = event => {
         if (!dragging) return;
-        if (event.touches && event.touches.length !== 1) {
-          clearHold();
-          return;
-        }
+        if (event.touches && event.touches.length !== 1) return;
         const pos = point(event);
         const dx = pos.x - startX, dy = pos.y - startY;
         if (!moved && Math.hypot(dx, dy) > MOVE_THRESHOLD) {
           moved = true;
-          clearHold();
           el.classList.add('dragging');
         }
         if (!moved) return;
@@ -467,7 +405,7 @@
         el.style.top = (startT + dy) + 'px';
       };
       const onEnd = () => {
-        clearHold();
+        if (!dragging) return;
         dragging = false;
         isDraggingCard = false;
         el.classList.remove('dragging');
