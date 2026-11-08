@@ -71,7 +71,7 @@
     /* ── Header ── */
     header {
       text-align: center;
-      padding: 56px 24px 28px;
+      padding: 56px 24px 10px;
     }
 
     .brand-tag {
@@ -110,21 +110,11 @@
       align-items: center;
       justify-content: center;
       gap: 18px;
-      margin: 22px auto;
+      margin: 18px auto 8px;
       max-width: 420px;
     }
     .ornament-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent); }
     .ornament-glyph { color: #c9a84c; font-size: 13px; opacity: 0.8; }
-
-    .subtitle {
-      font-family: 'Times New Roman', Times, serif;
-      font-style: italic;
-      color: #b8a07a;
-      font-size: 15px;
-      max-width: 520px;
-      margin: 0 auto;
-      line-height: 1.8;
-    }
 
     /* ── Controls ── */
     .controls {
@@ -132,7 +122,7 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      padding: 24px 20px 8px;
+      padding: 14px 20px 8px;
       flex-wrap: wrap;
     }
 
@@ -483,7 +473,7 @@
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
-      header { padding: 36px 16px 20px; }
+      header { padding: 36px 16px 12px; }
       .controls { gap: 10px; }
       .btn-draw { padding: 11px 24px; font-size: 11px; }
       .btn-shuffle { padding: 10px 18px; font-size: 10px; }
