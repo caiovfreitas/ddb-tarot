@@ -256,7 +256,7 @@
       const width = pendingCardsZone.clientWidth;
       const cardWidth = mobile ? 85 : 100;
       const cardHeight = mobile ? 145 : 170;
-      const gap = mobile ? 64 : 73; // Sobreposição discreta, como cartas espalhadas à mão.
+      const gap = mobile ? 84 : 94; // Espaçamento maior para evitar que os nomes das cartas se sobreponham.
       const usable = Math.max(cardWidth, width - 20);
       const perRow = Math.max(1, Math.floor((usable - cardWidth) / gap) + 1);
       const lineHeight = cardHeight + 48;
