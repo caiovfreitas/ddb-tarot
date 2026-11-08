@@ -239,11 +239,11 @@
 
     /* Mantém uma pequena pilha de cartas excedentes à esquerda do deck. */
     function positionPendingCards() {
-      [...pendingCardsZone.children].forEach((card, index) => {
-        const offset = Math.min(index, 8);
-        card.style.left = Math.max(0, pendingCardsZone.clientWidth - card.offsetWidth - offset * 2) + 'px';
-        card.style.top = (offset * 3) + 'px';
-        card.style.zIndex = String(20 + index);
+      // A grade CSS distribui as cartas sem sobreposição, em linhas adicionais.
+      [...pendingCardsZone.children].forEach(card => {
+        card.style.removeProperty('left');
+        card.style.removeProperty('top');
+        card.style.removeProperty('z-index');
       });
     }
 
