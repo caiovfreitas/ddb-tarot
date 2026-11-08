@@ -660,3 +660,21 @@
     width: 100%;
   }
 }
+
+/* Sem Casas: cartas retiradas espalhadas abaixo do baralho, não na mesa. */
+@media (min-width: 601px) {
+  .deck-zone.no-houses {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 24px;
+  }
+  .deck-zone.no-houses .deck-wrapper {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .deck-zone.no-houses .pending-cards {
+    grid-column: 1;
+    grid-row: 2;
+    width: min(100%, 900px);
+  }
+}
