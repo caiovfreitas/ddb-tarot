@@ -241,7 +241,7 @@
     function positionPendingCards() {
       [...pendingCardsZone.children].forEach((card, index) => {
         const offset = Math.min(index, 8);
-        card.style.left = (-offset * 2) + 'px';
+        card.style.left = Math.max(0, pendingCardsZone.clientWidth - card.offsetWidth - offset * 2) + 'px';
         card.style.top = (offset * 3) + 'px';
         card.style.zIndex = String(20 + index);
       });
