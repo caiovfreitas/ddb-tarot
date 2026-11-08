@@ -113,6 +113,8 @@
     const housesModal = document.getElementById('houses-modal');
     const houseInputs = document.getElementById('house-inputs');
     const housesGrid = document.getElementById('houses-grid');
+    const pendingCardsZone = document.getElementById('pending-cards');
+    let nextHouseId = 0;
 
     function appendHouseInput() {
       const input = document.createElement('input');
@@ -142,6 +144,7 @@
     function createHouse(name) {
       const house = document.createElement('section');
       house.className = 'house';
+      house.dataset.houseId = String(++nextHouseId);
       const title = document.createElement('h3');
       title.className = 'house-title';
       title.textContent = name;
@@ -152,6 +155,7 @@
       remove.setAttribute('aria-label', 'Excluir ' + name);
       remove.addEventListener('click', () => {
         house.remove();
+        positionCardsInHouses();
         updateReadingAreaHeight();
         if (!housesGrid.children.length && !placedCards.length) {
           document.getElementById('empty-state')?.classList.remove('hidden');
@@ -178,6 +182,7 @@
         return;
       }
       names.forEach(createHouse);
+      positionCardsInHouses();
       updateReadingAreaHeight();
       document.getElementById('empty-state')?.classList.add('hidden');
       closeHousesModal();
@@ -211,6 +216,37 @@
     window.addEventListener('resize', updateFloatingDraw);
     mobileDrawQuery.addEventListener('change', updateFloatingDraw);
 
+    /* Centraliza as cartas distribuídas automaticamente nas Casas.
+       As cartas arrastadas manualmente deixam de acompanhar a Casa. */
+    function positionCardsInHouses() {
+      const area = document.getElementById('reading-area');
+      const areaRect = area.getBoundingClientRect();
+      placedCards.forEach(card => {
+        const id = card.dataset.autoHouseId;
+        if (!id) return;
+        const house = [...housesGrid.children].find(item => item.dataset.houseId === id);
+        if (!house) {
+          delete card.dataset.autoHouseId;
+          return;
+        }
+        const rect = house.getBoundingClientRect();
+        const cardWidth = card.querySelector('.tarot-card')?.offsetWidth || 100;
+        const cardHeight = card.querySelector('.tarot-card')?.offsetHeight || 170;
+        card.style.left = (rect.left - areaRect.left + (rect.width - cardWidth) / 2) + 'px';
+        card.style.top = (rect.top - areaRect.top + Math.max(60, (rect.height - cardHeight) / 2)) + 'px';
+      });
+    }
+
+    /* Mantém uma pequena pilha de cartas excedentes à esquerda do deck. */
+    function positionPendingCards() {
+      [...pendingCardsZone.children].forEach((card, index) => {
+        const offset = Math.min(index, 8);
+        card.style.left = (-offset * 2) + 'px';
+        card.style.top = (offset * 3) + 'px';
+        card.style.zIndex = String(20 + index);
+      });
+    }
+
     /* Mantém o rodapé sempre após a última carta, mesmo sem Casas. */
     let isDraggingCard = false;
     function updateReadingAreaHeight() {
@@ -221,14 +257,17 @@
       const base = mobile ? 440 : 520;
       const gridBottom = grid.offsetTop + grid.offsetHeight + 20;
       const cardBottom = placedCards.reduce((max, card) => {
-        if (!card.isConnected) return max;
+        if (!card.isConnected || card.parentElement !== area) return max;
         const top = parseFloat(card.style.top) || 0;
         const height = card.querySelector('.tarot-card')?.offsetHeight || (mobile ? 145 : 170);
         return Math.max(max, top + height + 52);
       }, 0);
       area.style.minHeight = Math.ceil(Math.max(base, gridBottom, cardBottom)) + 'px';
     }
-    window.addEventListener('resize', updateReadingAreaHeight);
+    window.addEventListener('resize', () => {
+      positionCardsInHouses();
+      updateReadingAreaHeight();
+    });
 
     /* ── Draw ── */
     function drawCard() {
@@ -242,75 +281,83 @@
       if (emptyState) emptyState.classList.add('hidden');
 
       const area = document.getElementById('reading-area');
-      const margin = 16;
-      // Reserva espaço para a carta, rotação e legenda em cada tamanho de tela.
-      const isMobile = window.matchMedia('(max-width: 600px)').matches;
-      const cardWidth = isMobile ? 115 : 130;
-      const cardHeight = isMobile ? 190 : 215;
+      const nextHouse = [...housesGrid.children].find(house => house.dataset.autoFilled !== 'true');
+      const destination = nextHouse ? 'house' : housesGrid.children.length ? 'pending' : 'free';
+      let x = 0, y = 0, rot = 0;
 
-      let areaRect = area.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
+      if (destination === 'free') {
+        const margin = 16;
+        // Reserva espaço para a carta, rotação e legenda em cada tamanho de tela.
+        const isMobile = window.matchMedia('(max-width: 600px)').matches;
+        const cardWidth = isMobile ? 115 : 130;
+        const cardHeight = isMobile ? 190 : 215;
 
-      // Quando a área de leitura estiver abaixo da dobra, traga-a
-      // para a tela antes de definir a posição da nova carta.
-      const visibleTop = Math.max(areaRect.top, 0);
-      const visibleBottom = Math.min(areaRect.bottom, viewportHeight);
-      if (visibleBottom - visibleTop < Math.min(cardHeight + margin * 2, viewportHeight)) {
-        window.scrollTo({
-          top: window.scrollY + areaRect.top - margin,
-          behavior: 'instant'
-        });
-        areaRect = area.getBoundingClientRect();
-      }
+        let areaRect = area.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
 
-      // Interseção entre a área de leitura e o viewport atual.
-      // Posições são relativas à área, pois as cartas usam position:absolute.
-      const minX = Math.max(margin, -areaRect.left + margin);
-      const maxX = Math.min(
-        area.clientWidth - cardWidth - margin,
-        window.innerWidth - areaRect.left - cardWidth - margin
-      );
-      const minY = Math.max(margin, -areaRect.top + margin);
-      const maxY = Math.min(
-        area.clientHeight - cardHeight - margin,
-        viewportHeight - areaRect.top - cardHeight - margin
-      );
-      // Prioriza o centro da região visível e evita cobrir as cartas existentes.
-      // As posições usadas são relativas à área de leitura.
-      const boundsX = [minX, Math.max(minX, maxX)];
-      const boundsY = [minY, Math.max(minY, maxY)];
-      const centerX = (boundsX[0] + boundsX[1]) / 2;
-      const centerY = (boundsY[0] + boundsY[1]) / 2;
-      const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-      const occupied = placedCards.map(el => {
-        const r = el.getBoundingClientRect();
-        return {
-          x: r.left - areaRect.left,
-          y: r.top - areaRect.top,
-          w: r.width,
-          h: r.height
-        };
-      });
-      const overlap = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) *
-        Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
-      let best = { x: centerX, y: centerY, score: Infinity };
-      for (let i = 0; i < 180; i++) {
-        // Uma distribuição central com variações suficientes para ocupar espaços livres.
-        const scale = i === 0 ? 0 : Math.min(1, Math.sqrt(i / 110));
-        const candidateX = clamp(centerX + (Math.random() - 0.5) * (boundsX[1] - boundsX[0]) * 2 * scale, ...boundsX);
-        const candidateY = clamp(centerY + (Math.random() - 0.5) * (boundsY[1] - boundsY[0]) * 2 * scale, ...boundsY);
-        const box = { x: candidateX - 6, y: candidateY - 6, w: cardWidth, h: cardHeight };
-        const covered = occupied.reduce((total, other) => total + overlap(box, other), 0);
-        const distance = Math.hypot(
-          (candidateX - centerX) / Math.max(1, boundsX[1] - boundsX[0]),
-          (candidateY - centerY) / Math.max(1, boundsY[1] - boundsY[0])
+        // Quando a área de leitura estiver abaixo da dobra, traga-a
+        // para a tela antes de definir a posição da nova carta.
+        const visibleTop = Math.max(areaRect.top, 0);
+        const visibleBottom = Math.min(areaRect.bottom, viewportHeight);
+        if (visibleBottom - visibleTop < Math.min(cardHeight + margin * 2, viewportHeight)) {
+          window.scrollTo({
+            top: window.scrollY + areaRect.top - margin,
+            behavior: 'instant'
+          });
+          areaRect = area.getBoundingClientRect();
+        }
+
+        // Interseção entre a área de leitura e o viewport atual.
+        // Posições são relativas à área, pois as cartas usam position:absolute.
+        const minX = Math.max(margin, -areaRect.left + margin);
+        const maxX = Math.min(
+          area.clientWidth - cardWidth - margin,
+          window.innerWidth - areaRect.left - cardWidth - margin
         );
-        const score = covered * 12 + distance * 180 + Math.random() * 5;
-        if (score < best.score) best = { x: candidateX, y: candidateY, score };
+        const minY = Math.max(margin, -areaRect.top + margin);
+        const maxY = Math.min(
+          area.clientHeight - cardHeight - margin,
+          viewportHeight - areaRect.top - cardHeight - margin
+        );
+        // Prioriza o centro da região visível e evita cobrir as cartas existentes.
+        // As posições usadas são relativas à área de leitura.
+        const boundsX = [minX, Math.max(minX, maxX)];
+        const boundsY = [minY, Math.max(minY, maxY)];
+        const centerX = (boundsX[0] + boundsX[1]) / 2;
+        const centerY = (boundsY[0] + boundsY[1]) / 2;
+        const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+        const occupied = placedCards.map(el => {
+          const r = el.getBoundingClientRect();
+          return {
+            x: r.left - areaRect.left,
+            y: r.top - areaRect.top,
+            w: r.width,
+            h: r.height
+          };
+        });
+        const overlap = (a, b) => Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) *
+          Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+        let best = { x: centerX, y: centerY, score: Infinity };
+        for (let i = 0; i < 180; i++) {
+          // Uma distribuição central com variações suficientes para ocupar espaços livres.
+          const scale = i === 0 ? 0 : Math.min(1, Math.sqrt(i / 110));
+          const candidateX = clamp(centerX + (Math.random() - 0.5) * (boundsX[1] - boundsX[0]) * 2 * scale, ...boundsX);
+          const candidateY = clamp(centerY + (Math.random() - 0.5) * (boundsY[1] - boundsY[0]) * 2 * scale, ...boundsY);
+          const box = { x: candidateX - 6, y: candidateY - 6, w: cardWidth, h: cardHeight };
+          const covered = occupied.reduce((total, other) => total + overlap(box, other), 0);
+          const distance = Math.hypot(
+            (candidateX - centerX) / Math.max(1, boundsX[1] - boundsX[0]),
+            (candidateY - centerY) / Math.max(1, boundsY[1] - boundsY[0])
+          );
+          const score = covered * 12 + distance * 180 + Math.random() * 5;
+          if (score < best.score) best = { x: candidateX, y: candidateY, score };
+        }
+        x = best.x;
+        y = best.y;
+        rot = (Math.random() - 0.5) * 18;
+
+
       }
-      const x = best.x;
-      const y = best.y;
-      const rot = (Math.random() - 0.5) * 18;
 
       const wrapper = document.createElement('div');
       wrapper.className = 'placed-card';
@@ -357,10 +404,25 @@
 
       wrapper.appendChild(cardEl);
       wrapper.appendChild(label);
-      area.appendChild(wrapper);
+
+      if (destination === 'pending') {
+        wrapper.classList.add('pending-card');
+        pendingCardsZone.appendChild(wrapper);
+        positionPendingCards();
+      } else {
+        area.appendChild(wrapper);
+        if (nextHouse) {
+          nextHouse.dataset.autoFilled = 'true';
+          wrapper.dataset.autoHouseId = nextHouse.dataset.houseId;
+        }
+      }
 
       makeDraggable(wrapper);
       placedCards.push(wrapper);
+      if (nextHouse) {
+        positionCardsInHouses();
+        nextHouse.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       updateReshuffleButton();
       updateReadingAreaHeight();
     }
@@ -397,6 +459,20 @@
         const dx = pos.x - startX, dy = pos.y - startY;
         if (!moved && Math.hypot(dx, dy) > MOVE_THRESHOLD) {
           moved = true;
+          if (el.parentElement === pendingCardsZone) {
+            const rect = el.getBoundingClientRect();
+            const area = document.getElementById('reading-area');
+            const areaRect = area.getBoundingClientRect();
+            area.appendChild(el);
+            el.classList.remove('pending-card');
+            startL = rect.left - areaRect.left;
+            startT = rect.top - areaRect.top;
+            el.style.left = startL + 'px';
+            el.style.top = startT + 'px';
+            el.style.zIndex = 200;
+            positionPendingCards();
+          }
+          delete el.dataset.autoHouseId;
           el.classList.add('dragging');
         }
         if (!moved) return;
@@ -450,6 +526,8 @@
         const area = document.getElementById('reading-area');
         placedCards.forEach(el => { if (el.parentNode) el.parentNode.removeChild(el); });
         placedCards = [];
+        [...housesGrid.children].forEach(house => delete house.dataset.autoFilled);
+        positionPendingCards();
         updateReshuffleButton();
         updateReadingAreaHeight();
 
