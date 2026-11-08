@@ -160,12 +160,27 @@
 
     /* ── Deck stack ── */
     .deck-zone {
+      position: relative;
       display: flex;
       justify-content: center;
       align-items: flex-start;
       padding: 20px 24px 0;
       gap: 48px;
       flex-wrap: wrap;
+    }
+
+    /* Cartas retiradas depois que todas as Casas já receberam uma carta. */
+    .pending-cards {
+      position: absolute;
+      top: 20px;
+      right: calc(50% + 65px);
+      width: min(220px, calc(50% - 70px));
+      height: 190px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .pending-cards .pending-card {
+      pointer-events: auto;
     }
 
     .deck-wrapper {
