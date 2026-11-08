@@ -161,26 +161,38 @@
     /* ── Deck stack ── */
     .deck-zone {
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 114px minmax(0, 1fr);
+      align-items: start;
+      gap: 24px;
       padding: 20px 24px 0;
-      gap: 48px;
-      flex-wrap: wrap;
     }
 
-    /* Cartas retiradas depois que todas as Casas já receberam uma carta. */
+    /* Excedentes separados à esquerda do baralho, sem sobreposição. */
     .pending-cards {
-      position: absolute;
-      top: 20px;
-      right: calc(50% + 65px);
-      width: min(220px, calc(50% - 70px));
-      height: 190px;
+      position: relative;
+      grid-column: 1;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 22px 14px;
+      justify-items: end;
+      align-items: start;
+      min-width: 0;
       pointer-events: none;
       z-index: 3;
     }
     .pending-cards .pending-card {
+      position: relative;
+      left: auto !important;
+      top: auto !important;
+      transform: none !important;
       pointer-events: auto;
+    }
+    .deck-zone .deck-wrapper {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: center;
     }
 
     .deck-wrapper {
@@ -640,3 +652,22 @@
 
 /* Evita que o navegador reposicione a rolagem durante o arraste. */
 #reading-area { overflow-anchor: none; }
+
+/* No celular, os excedentes ficam abaixo do baralho, com espaço para arrastar. */
+@media (max-width: 600px) {
+  .deck-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .deck-zone .deck-wrapper { order: 1; }
+  .pending-cards {
+    order: 2;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 22px 16px;
+  }
+}
