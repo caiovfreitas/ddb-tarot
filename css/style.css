@@ -168,25 +168,18 @@
       padding: 20px 24px 0;
     }
 
-    /* Excedentes separados à esquerda do baralho, sem sobreposição. */
+    /* Cartas excedentes espalhadas organicamente, próximas ao baralho. */
     .pending-cards {
       position: relative;
       grid-column: 1;
       grid-row: 1;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 22px 14px;
-      justify-items: end;
-      align-items: start;
+      width: 100%;
       min-width: 0;
       pointer-events: none;
       z-index: 3;
     }
     .pending-cards .pending-card {
-      position: relative;
-      left: auto !important;
-      top: auto !important;
-      transform: none !important;
+      position: absolute;
       pointer-events: auto;
     }
     .deck-zone .deck-wrapper {
@@ -653,7 +646,7 @@
 /* Evita que o navegador reposicione a rolagem durante o arraste. */
 #reading-area { overflow-anchor: none; }
 
-/* No celular, os excedentes ficam abaixo do baralho, com espaço para arrastar. */
+/* Em telas pequenas, as cartas excedentes ficam abaixo do baralho. */
 @media (max-width: 600px) {
   .deck-zone {
     display: flex;
@@ -665,9 +658,5 @@
   .pending-cards {
     order: 2;
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 22px 16px;
   }
 }
