@@ -87,7 +87,7 @@
         document.body.classList.add('access-granted');
         document.getElementById('page').scrollIntoView({ block: 'start' });
       } else {
-        showFeedback(['Ops! Não conseguimos localizar este e-mail.', 'Verifique o e-mail cadastrado na matrícula e tenta novamente.']);
+        showFeedback(['Ops! Não conseguimos localizar este e-mail.', 'Verifique o e-mail cadastrado na matrícula e tente novamente.']);
       }
     } catch (error) {
       showFeedback('Não foi possível conectar ao validador. Tente novamente em instantes.');
