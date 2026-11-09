@@ -27,6 +27,22 @@
     <div class="shuffle-sub">Concentre sua intenção nas cartas</div>
   </div>
 
+  <!-- Validação simples de acesso por e-mail -->
+  <main id="access-gate" class="access-gate">
+    <section class="access-panel" aria-labelledby="access-title">
+      <p class="access-eyebrow">PRI FERRAZ</p>
+      <h2 id="access-title">Deck Digital</h2>
+      <p class="access-description">Informe o e-mail cadastrado no seu curso para acessar o Deck Digital.</p>
+      <form id="access-form">
+        <label for="access-email">Seu e-mail</label>
+        <input id="access-email" name="email" type="email" inputmode="email" autocomplete="email"
+          maxlength="254" placeholder="seuemail@exemplo.com" required />
+        <button id="access-submit" type="submit">Acessar Deck Digital</button>
+        <p id="access-feedback" class="access-feedback" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
   <!-- Page -->
   <div id="page">
     <header>
@@ -100,5 +116,6 @@
     </div>
   </div>
   <script src="js/script.js?v=20261108-2"></script>
+  <script src="js/access.js"></script>
 </body>
 </html>
