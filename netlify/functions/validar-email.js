@@ -26,6 +26,11 @@ exports.handler = async (event) => {
     return reply(400, { autorizado: false, mensagem: 'Informe um e-mail válido.' });
   }
 
+  // Exceção única: acesso interno, independentemente da lista de alunos.
+  if (email === 'admindeck@diariodabruxa.com.br') {
+    return reply(200, { autorizado: true });
+  }
+
   try {
     const response = await fetch(process.env.GAS_VALIDATOR_URL || DEFAULT_SCRIPT_URL, {
       method: 'POST',
