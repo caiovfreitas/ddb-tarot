@@ -51,7 +51,7 @@
         document.body.classList.add('access-granted');
         document.getElementById('page').scrollIntoView({ block: 'start' });
       } else {
-        showFeedback(['E-mail não encontrado. Confira o e-mail usado', 'na matrícula e tente novamente.']);
+        showFeedback('Ops! Não conseguimos localizar este e-mail. Verifique o e-mail cadastrado na matrícula e tenta novamente.');
       }
     } catch (error) {
       showFeedback('Não foi possível conectar ao validador. Tente novamente em instantes.');
