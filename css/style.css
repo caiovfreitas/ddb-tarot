@@ -689,11 +689,16 @@ body.access-granted #access-gate { display: none; }
   min-height: 100vh;
   min-height: 100dvh;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
+  width: 100%;
+  min-width: 0;
   padding: 24px 16px;
 }
 .access-panel {
-  width: min(100%, 470px);
+  width: 100%;
+  max-width: 470px;
+  min-width: 0;
   padding: clamp(28px, 6vw, 48px);
   border: 1px solid rgba(201,168,76,.55);
   border-radius: 12px;
@@ -715,8 +720,11 @@ body.access-granted #access-gate { display: none; }
 .access-description,
 .access-feedback {
   font: 400 15px/1.55 'Roboto', Arial, sans-serif;
+  width: 100%;
+  min-width: 0;
   text-align: center;
-  text-wrap: balance;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 .access-description {
   color: #cbb995;
@@ -725,6 +733,8 @@ body.access-granted #access-gate { display: none; }
 .access-description span,
 .access-feedback span {
   display: block;
+  width: 100%;
+  min-width: 0;
   white-space: nowrap;
 }
 #access-form { text-align: left; }
