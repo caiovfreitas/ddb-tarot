@@ -12,11 +12,22 @@
     if (!element) return;
     const spans = Array.from(element.querySelectorAll('span'));
     if (spans.length !== 2) return;
-    element.style.fontSize = '15px';
-    for (let fontSize = 15; fontSize >= 6; fontSize -= 0.25) {
-      element.style.fontSize = fontSize + 'px';
-      if (spans.every(span => span.scrollWidth <= span.clientWidth + 1)) break;
+
+    // O canvas mede as frases sem deixar o texto expandir o grid no Safari.
+    const availableWidth = element.clientWidth;
+    if (!availableWidth) return;
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    if (!context) return;
+
+    for (let size = 15; size >= 6; size -= 0.25) {
+      element.style.fontSize = size + 'px';
+      const computed = getComputedStyle(element);
+      context.font = computed.font;
+      const fits = spans.every(span => context.measureText(span.textContent).width <= availableWidth - 2);
+      if (fits) return;
     }
+    element.style.fontSize = '6px';
   };
 
   const resizeCopy = () => {
