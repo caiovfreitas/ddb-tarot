@@ -725,6 +725,7 @@ body.access-granted #access-gate { display: none; }
 .access-description span,
 .access-feedback span {
   display: block;
+  white-space: nowrap;
 }
 #access-form { text-align: left; }
 #access-form label {
@@ -766,3 +767,9 @@ body.access-granted #access-gate { display: none; }
   color: #f3b6ab;
 }
 .access-feedback[data-state="info"] { color: #e8d5a0; }
+
+/* Ganho de largura útil nos celulares sem alterar a composição no desktop. */
+@media (max-width: 480px) {
+  .access-gate { padding-inline: 8px; }
+  .access-panel { padding-inline: 16px; }
+}
