@@ -57,7 +57,7 @@
       showFeedback('Não foi possível conectar ao validador. Tente novamente em instantes.');
     } finally {
       button.disabled = false;
-      button.textContent = 'Acessar Deck Digital';
+      button.textContent = 'ACESSAR';
     }
   });
 })();
