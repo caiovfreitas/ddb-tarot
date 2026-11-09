@@ -678,3 +678,83 @@
     width: min(100%, 900px);
   }
 }
+
+
+/* Tela de entrada: o baralho permanece oculto enquanto o e-mail não for validado. */
+body:not(.access-granted) #page { display: none; }
+body.access-granted #access-gate { display: none; }
+.access-gate {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+.access-panel {
+  width: min(100%, 470px);
+  padding: clamp(28px, 6vw, 48px);
+  border: 1px solid rgba(201,168,76,.55);
+  border-radius: 12px;
+  background: rgba(23,14,38,.92);
+  box-shadow: 0 20px 70px rgba(0,0,0,.38);
+  text-align: center;
+}
+.access-eyebrow {
+  font: 11px 'Cinzel', serif;
+  letter-spacing: 4px;
+  color: #c9a84c;
+  margin-bottom: 16px;
+}
+.access-panel h2 {
+  font: 400 clamp(26px, 6vw, 38px) 'Cinzel Decorative', serif;
+  color: #e8d5a0;
+  margin-bottom: 18px;
+}
+.access-description {
+  font: italic 17px/1.5 'IM Fell English', serif;
+  color: #cbb995;
+  margin-bottom: 28px;
+}
+#access-form { text-align: left; }
+#access-form label {
+  display: block;
+  font: 12px 'Cinzel', serif;
+  color: #e8d5a0;
+  margin-bottom: 9px;
+}
+#access-email {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid rgba(201,168,76,.55);
+  border-radius: 5px;
+  background: #0d0a14;
+  color: #fff4dc;
+  font: 16px Arial, sans-serif;
+}
+#access-email:focus-visible {
+  outline: 2px solid #c9a84c;
+  outline-offset: 2px;
+}
+#access-submit {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 18px;
+  border: 0;
+  border-radius: 5px;
+  background: linear-gradient(135deg,#b8922a,#e8d5a0 45%,#c9a84c 75%,#a0761e);
+  color: #0d0a14;
+  cursor: pointer;
+  font: 600 12px 'Cinzel', serif;
+  letter-spacing: 1px;
+}
+#access-submit:disabled { opacity: .65; cursor: wait; }
+.access-feedback {
+  min-height: 1.5em;
+  margin-top: 14px;
+  text-align: center;
+  font: 15px/1.5 'IM Fell English', serif;
+  color: #f3b6ab;
+}
+.access-feedback[data-state="info"] { color: #e8d5a0; }
