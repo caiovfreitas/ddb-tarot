@@ -726,6 +726,10 @@ body.access-granted #access-gate { display: none; }
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
+.access-description,
+.access-feedback:not([data-state="info"]) {
+  font-style: italic;
+}
 .access-description {
   color: #cbb995;
   margin-bottom: 28px;
