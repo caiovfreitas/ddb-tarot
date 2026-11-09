@@ -712,10 +712,19 @@ body.access-granted #access-gate { display: none; }
   color: #e8d5a0;
   margin-bottom: 18px;
 }
+.access-description,
+.access-feedback {
+  font: 400 15px/1.55 Arial, Helvetica, sans-serif;
+  text-align: center;
+  text-wrap: balance;
+}
 .access-description {
-  font: italic 17px/1.5 'IM Fell English', serif;
   color: #cbb995;
   margin-bottom: 28px;
+}
+.access-description span,
+.access-feedback span {
+  display: block;
 }
 #access-form { text-align: left; }
 #access-form label {
@@ -754,7 +763,6 @@ body.access-granted #access-gate { display: none; }
   min-height: 1.5em;
   margin-top: 14px;
   text-align: center;
-  font: 15px/1.5 'IM Fell English', serif;
   color: #f3b6ab;
 }
 .access-feedback[data-state="info"] { color: #e8d5a0; }
