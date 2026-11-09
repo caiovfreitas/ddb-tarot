@@ -714,7 +714,7 @@ body.access-granted #access-gate { display: none; }
 }
 .access-description,
 .access-feedback {
-  font: 400 15px/1.55 Arial, Helvetica, sans-serif;
+  font: 400 15px/1.55 'Roboto', Arial, sans-serif;
   text-align: center;
   text-wrap: balance;
 }
@@ -729,7 +729,7 @@ body.access-granted #access-gate { display: none; }
 #access-form { text-align: left; }
 #access-form label {
   display: block;
-  font: 12px 'Cinzel', serif;
+  font: 400 12px 'Roboto', Arial, sans-serif;
   color: #e8d5a0;
   margin-bottom: 9px;
 }
@@ -755,7 +755,7 @@ body.access-granted #access-gate { display: none; }
   background: linear-gradient(135deg,#b8922a,#e8d5a0 45%,#c9a84c 75%,#a0761e);
   color: #0d0a14;
   cursor: pointer;
-  font: 600 12px 'Cinzel', serif;
+  font: 600 12px 'Roboto', Arial, sans-serif;
   letter-spacing: 1px;
 }
 #access-submit:disabled { opacity: .65; cursor: wait; }
